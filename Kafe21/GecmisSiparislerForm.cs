@@ -18,7 +18,7 @@ namespace Kafe21
         {
             this.kafeVeri = kafeVeri;
             InitializeComponent();
-            dgvSiparisler.DataSource = kafeVeri.GecmisSiparisler;
+            dgvSiparisler.DataSource = kafeVeri.Siparisler.Where(x => x.Durum != SiparisDurum.Aktif).ToList();
 
         }
 
@@ -32,7 +32,7 @@ namespace Kafe21
 
             DataGridViewRow satir = dgvSiparisler.SelectedRows[0];//secili satırı al
             Siparis siparis = (Siparis)satir.DataBoundItem;//satırdaki bağlı nesneyi al
-            dgvSiparisDetaylari.DataSource = siparis.SiparisDetaylar;
+            dgvSiparisDetaylari.DataSource = siparis.SiparisDetaylar.ToList();
         }
     }
 }

@@ -14,14 +14,12 @@ namespace Kafe21
     public partial class UrunlerForm : Form
     {
         KafeVeri db;
-        BindingList<Urun> blUrunler;
         public UrunlerForm(KafeVeri kafeVeri)
         {
             db = kafeVeri;
             InitializeComponent();
             dgvUrunler.AutoGenerateColumns = false;//otomatik sütün oluşturma
-            blUrunler = new BindingList<Urun>(db.Urunler);
-            dgvUrunler.DataSource = blUrunler;
+            dgvUrunler.DataSource = db.Urunler.ToList();
 
         }
 
@@ -36,19 +34,20 @@ namespace Kafe21
             }
             if (duzenlenen == null)//ekleme modu
             {
-                blUrunler.Add(new Urun()
+                db.Urunler.Add(new Urun()
                 {
                     UrunAd = urunAd,
                     BirimFiyat = nudBirimFiyat.Value
                 });
+                db.SaveChanges();
             }
             else//düzenleme modu
             {
                 duzenlenen.UrunAd = urunAd;
                 duzenlenen.BirimFiyat = nudBirimFiyat.Value;
-                blUrunler.ResetBindings();//değişiklik oldugunu haber verme işlemi
             }
-
+            db.SaveChanges();
+            dgvUrunler.DataSource = db.Urunler.ToList();
             FormuResetle();
         }
 
@@ -81,6 +80,25 @@ namespace Kafe21
         private void btnIptal_Click(object sender, EventArgs e)
         {
             FormuResetle();
+        }
+
+        private void dgvUrunler_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Delete && dgvUrunler.SelectedRows.Count > 0)
+            {
+                var seciliSatir = dgvUrunler.SelectedRows[0];
+                var urun = (Urun)seciliSatir.DataBoundItem;
+
+                if (urun.SiparisDetaylar.Count>0)
+                {
+                    MessageBox.Show("Bu ürün daha önce sipariş verildiği için kaldırılamaz");
+                    return;
+                }
+
+                db.Urunler.Remove(urun);
+                db.SaveChanges();
+                dgvUrunler.DataSource = db.Urunler.ToList();
+            }
         }
     }
 }

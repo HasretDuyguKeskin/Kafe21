@@ -17,7 +17,6 @@ namespace Kafe21
 
         KafeVeri db;
         Siparis siparis;
-        BindingList<SiparisDetay> blSiparisDetaylar;
         public SiparisForm(KafeVeri kafeVeri, Siparis siparis)
         {
             db = kafeVeri;
@@ -33,13 +32,12 @@ namespace Kafe21
 
         private void SiparisDetaylariYukle()
         {
-            blSiparisDetaylar = new BindingList<SiparisDetay>(siparis.SiparisDetaylar);
-            dgvSiparisDetaylar.DataSource = blSiparisDetaylar;
+            dgvSiparisDetaylar.DataSource = siparis.SiparisDetaylar.ToList();
         }
 
         private void UrunleriYukle()
         {
-            cboUrun.DataSource = db.Urunler;
+            cboUrun.DataSource = db.Urunler.ToList();
         }
 
         private void OdemeTutariGuncelle()
@@ -54,10 +52,8 @@ namespace Kafe21
 
             cboMasaNo.DataSource = Enumerable
                 .Range(1, db.MasaAdet)
-                .Where(x => !db.AktifSiparisler.Any(s => s.MasaNo == x))
+                .Where(x => !db.Siparisler.Any(s => s.MasaNo == x && s.Durum == SiparisDurum.Aktif))
                 .ToList();
-
-
         }
 
         private void btnEkle_Click(object sender, EventArgs e)
@@ -65,23 +61,20 @@ namespace Kafe21
             Urun urun = (Urun)cboUrun.SelectedItem;
             int adet = (int)nudAdet.Value;
 
-            blSiparisDetaylar.Add(new SiparisDetay()
+            siparis.SiparisDetaylar.Add(new SiparisDetay()
             {
                 UrunAd = urun.UrunAd,
                 BirimFiyat = urun.BirimFiyat,
-                Adet = adet
-            });
-            //dgvSiparisDetaylar.DataSource = null;
-            //dgvSiparisDetaylar.DataSource = siparis.SiparisDetaylar;
-
+                Adet = adet,
+                UrunId = urun.Id
+            }) ;          
+            db.SaveChanges();
+            dgvSiparisDetaylar.DataSource = siparis.SiparisDetaylar.ToList();
             OdemeTutariGuncelle();
-
         }
 
         private void dgvSiparisDetaylar_KeyDown(object sender, KeyEventArgs e)
         {
-
-
             //delete ye basıldıysa ve dgv üzerinde en az bir secili satır varsa
             if (e.KeyCode == Keys.Delete && dgvSiparisDetaylar.SelectedRows.Count > 0)
             {
@@ -91,7 +84,9 @@ namespace Kafe21
                 {
                     DataGridViewRow satir = dgvSiparisDetaylar.SelectedRows[0];
                     SiparisDetay sd = (SiparisDetay)satir.DataBoundItem;//kastetmek
-                    blSiparisDetaylar.Remove(sd);
+                    db.SiparisDetaylar.Remove(sd);
+                    db.SaveChanges();
+                    dgvSiparisDetaylar.DataSource = siparis.SiparisDetaylar.ToList();
                     OdemeTutariGuncelle();
                 }
             }
@@ -120,8 +115,7 @@ namespace Kafe21
 
             siparis.KapanisZamani = DateTime.Now;
             siparis.Durum = durum;
-            db.AktifSiparisler.Remove(siparis);
-            db.GecmisSiparisler.Add(siparis);
+            db.SaveChanges();
             DialogResult = DialogResult.OK;//bu formda işim bitti.
         }
 
@@ -132,6 +126,7 @@ namespace Kafe21
                 int eskiMasaNo = siparis.MasaNo;
                 int yeniMasaNo = (int)cboMasaNo.SelectedItem;
                 siparis.MasaNo = yeniMasaNo;
+                db.SaveChanges();
                 MasaNolariGuncelle();
 
                 if (MasaTasindi != null)

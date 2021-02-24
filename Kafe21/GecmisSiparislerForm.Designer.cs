@@ -119,7 +119,7 @@ namespace Kafe21
             this.dgvSiparisDetaylari.ReadOnly = true;
             this.dgvSiparisDetaylari.RowHeadersVisible = false;
             this.dgvSiparisDetaylari.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvSiparisDetaylari.Size = new System.Drawing.Size(815, 243);
+            this.dgvSiparisDetaylari.Size = new System.Drawing.Size(815, 241);
             this.dgvSiparisDetaylari.TabIndex = 10;
             // 
             // GecmisSiparislerForm
