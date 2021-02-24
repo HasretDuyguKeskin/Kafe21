@@ -119,7 +119,7 @@ namespace Kafe21
             this.dgvSiparisDetaylari.ReadOnly = true;
             this.dgvSiparisDetaylari.RowHeadersVisible = false;
             this.dgvSiparisDetaylari.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dgvSiparisDetaylari.Size = new System.Drawing.Size(815, 241);
+            this.dgvSiparisDetaylari.Size = new System.Drawing.Size(815, 239);
             this.dgvSiparisDetaylari.TabIndex = 10;
             // 
             // GecmisSiparislerForm
@@ -133,6 +133,7 @@ namespace Kafe21
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "GecmisSiparislerForm";
             this.Text = "GecmisSiparislerForm";
+            this.Load += new System.EventHandler(this.GecmisSiparislerForm_Load);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             this.splitContainer1.Panel2.ResumeLayout(false);

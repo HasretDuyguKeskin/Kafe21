@@ -34,5 +34,10 @@ namespace Kafe21
             Siparis siparis = (Siparis)satir.DataBoundItem;//satırdaki bağlı nesneyi al
             dgvSiparisDetaylari.DataSource = siparis.SiparisDetaylar.ToList();
         }
+
+        private void GecmisSiparislerForm_Load(object sender, EventArgs e)
+        {
+            dgvSiparisler.ClearSelection();
+        }
     }
 }
